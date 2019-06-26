@@ -1,8 +1,10 @@
+package com.company;
+
 import java.util.Random;
 import java.util.Scanner;
+import java.util.regex.Pattern;
 
 public class Main {
-
 
     public static void main(String[] args) {
         // scanner introducere date
@@ -16,11 +18,8 @@ public class Main {
         System.out.println("Grija! Poti gresi doar de 7 ori pana la spanzuratoare :(  Succes!");
         System.out.println();
 
-
-        // boolean pentru JOC ACTIV in WHILE (LOOP MARE)
-        boolean jocActiv = true;
-
-        while (jocActiv=true){
+        //am renuntat la variabila jocActiv, nu era necesar
+        while (true){
 
             // array care contine constructia omuletului (spanzuratului)
             String[][] omulet = new String[3][3];
@@ -46,21 +45,45 @@ public class Main {
 
             System.out.println("Introdu o litera ca sa incepem:");
             System.out.println(toGuess);
-
+            //literele deja introduse
+            StringBuilder letters=new StringBuilder();
             do {
-                char c = input.nextLine().charAt(0);
+                char c;
+                //in do-while introducem pana introduce un singur
+                //caracter, care e litera si care nu a mai fost
+                //introdus in trecut;
+                //in felul asta nu termini jocul introducand aceeasi litera de 7 ori
+                //si nici nu mai faci verificarile urmatoare daca introduce o litera
+                //pe care cuvantul o are
+                do {
+                    String in = input.nextLine();
+                    if(!Pattern.matches("[a-z]",in.trim())){
+                        System.out.println("Input incorect!Introduceti o litera!");
+                        continue;
+                    }
+                    c=in.charAt(0);
+                    if(letters.indexOf(c+"")==-1){
+                        letters.append(c);
+                        break;
+                    }
+                    System.out.println("Ati mai introdus litera!");
+                }while (true);
+
                 boolean flag = false;
                 for (int i = 0; i < str.length(); i++) {
                     if (c == str.charAt(i)) {
                         flag = true;
                         sb.setCharAt(i, c);
-                        System.out.println("Bravo, ai ghicit litera "+c+" :) Incearca alta litera:");
                     }
-
                 }
-
+                //am scos aici ca sa afiseze o singura data mesajul in loc sa afisez in for
+                if(flag && sb.toString().contains("-")){
+                    System.out.println("Bravo, ai ghicit litera "+c+" :) Incearca alta litera:");
+                } else if(flag){
+                    System.out.println("Ai castigat!");
+                    break;
+                }
                 if (!flag) {
-
                     count++;
                     if (count == 1) omulet[0][1] = "o";
                     if (count == 2) omulet[1][1] = "|";
@@ -69,7 +92,6 @@ public class Main {
                     if (count == 5) omulet[2][0] = "/";
                     if (count == 6) omulet[2][2] = "\\";
                     if (count > 6) {
-
                         System.out.println("Nu ati ghicit si ati fost spanzurat, cuvantul era: " + str);
                         break;
                     }
@@ -77,38 +99,38 @@ public class Main {
                 }
 
                 System.out.println(sb);
-                for (int j = 0; j < omulet.length; j++) {
-                    for (int k = 0; k < omulet.length; k++) {
-                        System.out.print(omulet[j][k]);
+                for (String[] line:omulet) {
+                    for (String o:line) {
+                        System.out.print(o);
                     }
                     System.out.println();
 
                 }
             } while (sb.toString().contains("-"));
-            System.out.println("Ati gresit de " + count + " ori.");
 
             // cod reinitializare joc dupa primul loop
 
-            System.out.println("Vrei sa mai incerci o data? Tasteaza Da sau Nu:");
-
-            String reluareJoc= input.nextLine();
+            System.out.print("Vrei sa mai incerci o data? ");
+            String reluareJoc;
+            //introducem pana se introduce da/nu
+            do {
+                System.out.println("Da/Nu?");
+                reluareJoc = input.nextLine();
+            } while(!(reluareJoc.equalsIgnoreCase("da") ||
+                    reluareJoc.equalsIgnoreCase("nu")));
             if(reluareJoc.equalsIgnoreCase("da")) {
                 System.out.println("Bine ai revenit in joc, " + numeJucator + "!");
                 System.out.println("Ai grija, poti gresi doar de 7 ori pana spanzuri omul :(  Succes!");
                 System.out.println();
-                jocActiv = true;
 
 
             }
             else if(reluareJoc.equalsIgnoreCase("nu")){
-                jocActiv=false;
                 System.out.println("Ne mai jucam si data viitoare :) ");
-
                 break;
             }
 
         }
-
     }
 
 }
